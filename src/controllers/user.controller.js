@@ -6,11 +6,11 @@ import { ApiResponse } from "../utils/ApiResponse.js"
 
 const registerUser = asyncHandler( async (req, res) => {
     // get user details from the frontend
-    const {name, email, password} = req.body;
+    const {name, email, password, address} = req.body;
     console.log("email ", email);
 
     // validation - not empty
-    if(!name || !email || !password) {
+    if(!name || !email || !password || !address) {
         throw new ApiError(400, "Field cannot be empty!!");
     }
 
@@ -24,8 +24,9 @@ const registerUser = asyncHandler( async (req, res) => {
     console.log(existingUser);
 
     // check for avatar 
-    const avatarLocalPath = req.files?.avatar[0]?.path;
-    console.log("request files ", req.files);
+    const avatarLocalPath = req.file?.path;
+    // console.log("request files ", req.file);
+    // console.log("avatar local path", avatarLocalPath);
 
     if(!avatarLocalPath) {
         throw new ApiError(400, "Avatar file is required");
@@ -36,13 +37,17 @@ const registerUser = asyncHandler( async (req, res) => {
     if(!avatar) {
         throw new ApiError(400, "Avatar file is required");
     }
+    // console.log("avatar ", avatar);
 
     const user = await User.create({
         name,
-        avatar: avatar.url,
+        avatar: avatar?.url,
         email,
+        address,
         password
     })
+
+    // console.log("user ", user);
 
     const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
@@ -51,6 +56,8 @@ const registerUser = asyncHandler( async (req, res) => {
     if(!createdUser) {
         throw new ApiError(500, "Error while registering the user");
     }
+
+    
 
     return res.status(201).json(
         new ApiResponse(200, createdUser, "User Registered Successfully!!")
