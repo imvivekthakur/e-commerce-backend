@@ -3,9 +3,8 @@ import { ApiError } from "../utils/ApiError.js";
 
 const createReview = async (req, res, next) => {
   try {
-    console.log("hello");
     const { name, rating, comment, productId } = req.body;
-    console.log(req);
+    // console.log(req);
 
     if (!name || !rating || !comment || !productId) {
       throw new ApiError(400, 'All the input fields are required.');
