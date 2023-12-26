@@ -15,13 +15,13 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    phone: {
+        type: String,
+        unique: true,
+        required: true,
+    },
     address: {
         type: String,
-        required: true
-    },
-    avatar: {
-        type: String,
-        required: true
     },
     wishlist: {
         type: Schema.Types.ObjectId,
